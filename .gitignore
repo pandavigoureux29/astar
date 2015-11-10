@@ -1,0 +1,7 @@
+*.ipch
+*.suo
+Astar/Astar.opensdf
+*.sdf
+Astar/Astar/Astar.vcxproj
+Astar/Astar/Astar.vcxproj.filters
+Astar/Astar/Debug/
