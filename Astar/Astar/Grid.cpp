@@ -5,13 +5,17 @@
 Grid::Grid()
 	:m_gridData(10)
 {
+	if (!font.loadFromFile("G:/Projects/MVSProjects/astar/Astar/dodjzem.ttf"))
+	{
+		// erreur...
+	}
 	//Create data
 	for (int i = 0; i < m_gridData.size(); i++) {
 		m_gridData[i] = std::vector<int>(10);
 	}
 	//FillRandom();
 	FillStatic();
-	Print();
+	//Print();
 }
 
 void Grid::FillRandom() {
@@ -76,6 +80,9 @@ void Grid::Draw(sf::RenderWindow *_window) {
 	//create rect template for the grid
 	sf::RectangleShape rect;
 	rect.setSize( sf::Vector2f(m_cellWidth, m_cellWidth) );
+	//create text template
+	sf::Text text;
+	text.setFont(font);
 
 	//
 	for (int j = 0; j < m_height; j++) {
@@ -93,8 +100,22 @@ void Grid::Draw(sf::RenderWindow *_window) {
 			rect.setPosition(sf::Vector2f(i * 64, j * 64));
 			//then finally draw
 			_window->draw(rect);
+			//TEXT
+			text.setString(std::to_string(i)+","+std::to_string(j));
+			text.setPosition(sf::Vector2f(i * 64, j * 64));
+			text.setColor(sf::Color::Red);
+			text.setCharacterSize(15);
+			_window->draw(text);
 		}
 	}
+}
+
+int * Grid::GetStartPoint() {
+	return m_startPoint;
+}
+
+int * Grid::GetGoalPoint() {
+	return m_goalPoint;
 }
 
 void Grid::FillStatic() {
@@ -108,6 +129,17 @@ void Grid::FillStatic() {
 	m_gridData[7] = { 0,1,1,1,1,1,0,1,1,0 };
 	m_gridData[8] = { 0,1,1,1,1,1,0,1,1,0 };
 	m_gridData[9] = { 0,0,0,0,0,0,0,3,0,0 };
+
+	m_startPoint = new int[2]{ 2,0 };
+	m_goalPoint = new int[2] { 9, 7 };
+}
+
+int Grid::GetWidth() {
+	return m_width;
+}
+
+int Grid::GetHeight() {
+	return m_height;
 }
 
 Grid::~Grid()

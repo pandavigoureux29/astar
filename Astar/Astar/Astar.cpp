@@ -5,6 +5,7 @@
 #include <SFML/Graphics.hpp>
 
 #include "Grid.h"
+#include "AstarExe.h"
 
 int main()
 {
@@ -16,6 +17,8 @@ int main()
 	std::srand(time(0));
 
 	Grid * m_grid = new Grid();
+	AstarExe * m_astarExe = new AstarExe(m_grid);
+	m_astarExe->Start();
 
 	while (window.isOpen())
 	{
@@ -31,6 +34,8 @@ int main()
 		m_grid->Draw(&window);
 		window.display();
 	}
+	delete m_astarExe;
+	delete m_grid;
 
     return 0;
 }
