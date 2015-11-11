@@ -9,7 +9,7 @@
 int main()
 {
 
-	sf::RenderWindow window(sf::VideoMode(200, 200), "SFML works!");
+	sf::RenderWindow window(sf::VideoMode(800, 600), "SFML works!");
 	sf::CircleShape shape(100.f);
 	shape.setFillColor(sf::Color::Green);
 
@@ -25,7 +25,8 @@ int main()
 		}
 
 		window.clear();
-		window.draw(shape);
+		//window.draw(shape);
+		m_grid->Draw(&window);
 		window.display();
 	}
 
