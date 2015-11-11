@@ -9,9 +9,11 @@
 int main()
 {
 
-	sf::RenderWindow window(sf::VideoMode(800, 600), "SFML works!");
+	sf::RenderWindow window(sf::VideoMode(800, 800), "SFML works!");
 	sf::CircleShape shape(100.f);
 	shape.setFillColor(sf::Color::Green);
+
+	std::srand(time(0));
 
 	Grid * m_grid = new Grid();
 

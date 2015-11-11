@@ -17,12 +17,15 @@ private:
 public:
 	static const int S_WALL_TYPE =  0;
 	static const int S_GROUND_TYPE = 1;
+	static const int S_START_TYPE = 2;
+	static const int S_GOAL_TYPE = 3;
 
 //functions
 private:
 	void SetValueAt(int value,int i, int j);
 	int GetValueAt(int i, int j);
 
+	void FillStatic();
 	void FillRandom();
 
 public :
