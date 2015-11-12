@@ -17,13 +17,14 @@ void AstarExe::Start() {
 	
 	m_debugCount = 0;
 
-	/*while (m_open.size() > 0 && debug_count < 20) {
-		
-	}*/
 }
 
 void AstarExe::Update() {
-	if (!m_started || m_found || m_open.size() <= 0)
+	if (m_found) {
+		BuildBestPath();
+		return;
+	}
+	if (!m_started || m_open.size() <= 0)
 		return;
 	//Get best node from the OPEN list
 	m_processingNode = PopBest();
@@ -45,7 +46,6 @@ void AstarExe::Update() {
 
 	//Add current node to closed list
 	m_closed.push_back(m_processingNode);
-	printf("[CLOSED] Node (%d,%d) added\n", i, j);
 
 	m_debugCount++;
 }
@@ -53,24 +53,24 @@ void AstarExe::Update() {
 // Checks all neighbours
 void AstarExe::CheckNeighbours(Node * _node) {
 	//up
-	CheckNode(_node->i, _node->j - 1, _node->cost+1);
+	CheckNode(_node->i, _node->j - 1, _node->cost+1, _node);
 	//down
-	CheckNode(_node->i, _node->j + 1, _node->cost+1);
+	CheckNode(_node->i, _node->j + 1, _node->cost+1, _node);
 	//left
-	CheckNode(_node->i - 1, _node->j, _node->cost+1);
+	CheckNode(_node->i - 1, _node->j, _node->cost+1, _node);
 	//right
-	CheckNode(_node->i + 1, _node->j, _node->cost+1);
+	CheckNode(_node->i + 1, _node->j, _node->cost+1, _node);
 }
 
 //check a node and add it to open list if necessary
-void AstarExe::CheckNode(int _i, int _j, int _cost) {
+void AstarExe::CheckNode(int _i, int _j, int _cost, Node * _parent) {
 	//out of bounds
 	if (_i < 0 || _i > m_grid->GetWidth() - 1 || _j < 0 || _j > m_grid->GetHeight() - 1)
 		return;
 	//Get Node at the position in the grid
 	Node * node = &( *m_grid->GetNodeAt(_i, _j) );
 	//don't process walls
-	if (node->type == Grid::S_WALL_TYPE)
+	if (node->type == Grid::S_WALL_TYPE ||node->type == Grid::S_START_TYPE)
 		return;
 	//Set cost if not done yet
 	if( node->cost == 0)
@@ -81,6 +81,7 @@ void AstarExe::CheckNode(int _i, int _j, int _cost) {
 	bool inClosed = BetterExistsInList(m_closed, node);
 	//if not in any list or no better exists
 	if (!inOpen && !inClosed) {
+		node->parent = _parent;
 		ComputeHeuristic(node);
 		printf("[OPEN] Node (%d,%d) added (h:%d)\n", _i, _j, node->heuristic);
 		m_open.push_back(node);
@@ -91,7 +92,7 @@ int AstarExe::ComputeHeuristic(Node * _node) {
 	int toGoal = abs(m_goalNode->i - _node->i) + abs(m_goalNode->j - _node->j);
 	//int toGoal = pow( (m_goalNode->j - _node->j), 2) + pow( (m_goalNode->i - _node->i),2);
 	//toGoal = sqrt(toGoal);
-	_node->heuristic =/* _node->cost*/ + toGoal;
+	_node->heuristic = _node->cost + toGoal;
 	return _node->heuristic;
 }
 
@@ -103,8 +104,13 @@ Node * AstarExe::PopBest() {
 	//find best heuristic index
 	for (int i = 0; i < m_open.size(); i++) {
 		tempNode = m_open.at(i);
-		if ((tempNode->heuristic < bestHeuristic) 
+		/*if ((tempNode->heuristic < bestHeuristic) 
 			 || (tempNode->heuristic == bestHeuristic && tempNode->cost < bestCost) ) {				
+			bestIndex = i;
+			bestHeuristic = tempNode->heuristic;
+			bestCost = tempNode->cost;
+		}*/
+		if (tempNode->heuristic < bestHeuristic ) {
 			bestIndex = i;
 			bestHeuristic = tempNode->heuristic;
 			bestCost = tempNode->cost;
@@ -115,6 +121,14 @@ Node * AstarExe::PopBest() {
 	//erase it from list
 	m_open.erase(m_open.begin() + bestIndex);
 	return node;
+}
+
+void AstarExe::BuildBestPath() {
+	if(m_processingNode->Equals(m_startNode)) {
+		return;
+	}
+	m_processingNode->finalWayID = m_processingNode->cost;
+	m_processingNode = m_processingNode->parent;
 }
 
 int AstarExe::FindIndexInList(std::vector<Node*> _list, Node * _toFind) {

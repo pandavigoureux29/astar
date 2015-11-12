@@ -96,15 +96,18 @@ void Grid::Draw(sf::RenderWindow *_window) {
 				case S_GOAL_TYPE: rect.setFillColor(sf::Color::Red); break;
 				case S_START_TYPE: rect.setFillColor(sf::Color::Blue); break;
 			}
-			if (node->visited == true) {
+			if (node->visited == true && node->type != Grid::S_START_TYPE) {
 				rect.setFillColor(sf::Color::Yellow);
+			}
+			if (node->finalWayID >= 0) {
+				rect.setFillColor(sf::Color::Green);
 			}
 			//set position 
 			rect.setPosition(sf::Vector2f(i * 64, j * 64));
 			//then finally draw
 			_window->draw(rect);
 			//TEXT
-			text.setString(std::to_string(node->i)+","+std::to_string(node->j));
+			/*text.setString(std::to_string(node->i)+","+std::to_string(node->j));
 			text.setPosition(sf::Vector2f(i * 64, j * 64));
 			text.setColor(sf::Color::Red);
 			text.setCharacterSize(15);
@@ -113,17 +116,17 @@ void Grid::Draw(sf::RenderWindow *_window) {
 			text.setColor(sf::Color::Black);
 			text.setPosition(sf::Vector2f(i * 64, j * 64 +20));
 			text.setString("c"+std::to_string(node->cost) + ", h" + std::to_string(node->heuristic));
-			_window->draw(text);
+			_window->draw(text);*/
 		}
 	}
 }
 
 Node * Grid::GetStartNode() {
-	return &m_startingNode;
+	return m_startingNode;
 }
 
 Node * Grid::GetGoalNode() {
-	return &m_goalNode;
+	return m_goalNode;
 }
 
 void Grid::FillStatic() {
@@ -136,10 +139,10 @@ void Grid::FillStatic() {
 	FillColumn(6, new int[10]{ 0,1,1,1,1,1,0,1,1,0 });
 	FillColumn(7, new int[10]{ 0,1,1,1,1,1,1,1,1,0 });
 	FillColumn(8, new int[10]{ 0,1,1,1,1,1,0,1,1,0 });
-	FillColumn(9, new int[10]{ 0,0,0,0,0,0,0,0,3,0 });
+	FillColumn(9, new int[10]{ 0,0,0,0,0,0,0,3,0,0 });
 
-	m_startingNode = Node(2,0,S_START_TYPE);
-	m_goalNode = Node(9, 7, S_GOAL_TYPE);
+	m_startingNode = GetNodeAt(2, 0);
+	m_goalNode = GetNodeAt(9, 7);
 }
 
 void Grid::FillColumn(int _index, int * _array) {

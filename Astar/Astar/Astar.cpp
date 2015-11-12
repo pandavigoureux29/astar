@@ -10,7 +10,7 @@
 int main()
 {
 
-	sf::RenderWindow window(sf::VideoMode(800, 800), "SFML works!");
+	sf::RenderWindow window(sf::VideoMode(800, 800), "Astar Pathfinding - C++");
 	sf::CircleShape shape(100.f);
 	shape.setFillColor(sf::Color::Green);
 
@@ -38,7 +38,7 @@ int main()
 
 		count++;
 
-		/*if (count % 20 == 0) {
+		/*if (count % 2 == 0) {
 			m_astarExe->Update();
 		}*/
 

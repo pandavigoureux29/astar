@@ -21,7 +21,8 @@ private :
 
 	int ComputeHeuristic(Node * _node);
 	void CheckNeighbours(Node * _node);
-	void CheckNode(int i, int j, int _cost);
+	void CheckNode(int i, int j, int _cost, Node * _parent);
+	void BuildBestPath();
 
 	Node * PopBest();
 	int FindIndexInList(std::vector<Node*> _list, Node * _toFind);

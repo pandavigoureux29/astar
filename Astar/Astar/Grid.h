@@ -16,8 +16,8 @@ private:
 	int m_cellWidth = 64;
 	int m_cellHeight = 64;
 
-	Node m_startingNode;
-	Node m_goalNode;
+	Node * m_startingNode;
+	Node * m_goalNode;
 
 	sf::Font font;
 

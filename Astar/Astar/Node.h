@@ -8,6 +8,8 @@ public:
 	int heuristic = -1;
 	int cost = 0;
 
+	Node * parent;
+
 	bool visited = false;
 	int finalWayID = -1;
 
