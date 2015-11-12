@@ -8,54 +8,56 @@ AstarExe::AstarExe(Grid *_grid)
 }
 
 void AstarExe::Start() {
-	//build Start node
-	int * stPoint = m_grid->GetStartPoint();
-	Node start(stPoint[0], stPoint[1], Grid::S_START_TYPE);
-	//build goal node
-	int * goalPoint = m_grid->GetGoalPoint();
-	m_goal = Node(goalPoint[0], goalPoint[1], Grid::S_GOAL_TYPE);
+	m_started = true;
+	m_startNode = m_grid->GetStartNode();
+	m_goalNode = m_grid->GetGoalNode();
 
 	//First node to check
-	m_open.push_back(&start);
+	m_open.push_back(m_startNode);
+	
+	m_debugCount = 0;
 
-	//position
-	int i = start.i, j = start.j;
-
-	int debug_count = 0;
-
-	while (m_open.size() > 0 && debug_count < 20) {
-		Node * currentNode = PopBest();
-		i = currentNode->i; j = currentNode->j;
-
-		printf("------LOOP (%d,%d) -------\n", i,j);
+	/*while (m_open.size() > 0 && debug_count < 20) {
 		
-		//check if this is the goal
-		if (currentNode->Equals(&m_goal)) {
-			printf("Found Goal\n");
-			return;
-		}
-		else {
-			CheckNeighbours(i, j, currentNode->cost +1);
-		}
+	}*/
+}
 
-		//Add current node to closed list
-		m_closed.push_back(currentNode);
-		printf("[CLOSED] Node (%d,%d) added\n", i, j);
+void AstarExe::Update() {
+	if (!m_started || m_found || m_open.size() <= 0)
+		return;
+	m_processingNode = PopBest();
+	m_processingNode->visited = true;
+	int i = m_processingNode->i, j = m_processingNode->j;
 
-		debug_count++;
+	printf("------LOOP (%d,%d) -------\n", i, j);
+
+	//check if this is the goal
+	if (m_processingNode->Equals(m_goalNode)) {
+		printf("Found Goal\n");
+		m_found = true;
+		return;
 	}
+	else {
+		CheckNeighbours(m_processingNode);
+	}
+
+	//Add current node to closed list
+	m_closed.push_back(m_processingNode);
+	printf("[CLOSED] Node (%d,%d) added\n", i, j);
+
+	m_debugCount++;
 }
 
 // Checks all neighbours
-void AstarExe::CheckNeighbours(int _i, int _j, int _cost) {
+void AstarExe::CheckNeighbours(Node * _node) {
 	//up
-	CheckNode(_i, _j - 1, _cost);
+	CheckNode(_node->i, _node->j - 1, _node->cost+1);
 	//down
-	CheckNode(_i, _j + 1, _cost);
+	CheckNode(_node->i, _node->j + 1, _node->cost+1);
 	//left
-	CheckNode(_i - 1, _j, _cost);
+	CheckNode(_node->i - 1, _node->j, _node->cost+1);
 	//right
-	CheckNode(_i + 1, _j, _cost);
+	CheckNode(_node->i + 1, _node->j, _node->cost+1);
 }
 
 //check a node and add it to open list if necessary
@@ -64,13 +66,11 @@ void AstarExe::CheckNode(int _i, int _j, int _cost) {
 	if (_i < 0 || _i > m_grid->GetWidth() - 1 || _j < 0 || _j > m_grid->GetHeight() - 1)
 		return;
 	//type of the processed cell
-	int type = m_grid->GetValueAt(_i, _j);
+	Node * node = &( *m_grid->GetNodeAt(_i, _j) );
 	//don't process walls
-	if (type == Grid::S_WALL_TYPE)
+	if (node->type == Grid::S_WALL_TYPE)
 		return;
 	
-	//Create node
-	Node * node = new Node(_i, _j, type);
 	if( node->cost == 0)
 		node->cost = _cost;
 
@@ -79,19 +79,19 @@ void AstarExe::CheckNode(int _i, int _j, int _cost) {
 	bool inClosed = BetterExistsInList(m_closed, node);
 	//if not in any list
 	if (!inOpen && !inClosed) {
-		ComputeHeuristic(node, &m_goal);
+		ComputeHeuristic(node);
 		printf("[OPEN] Node (%d,%d) added (h:%d)\n", _i, _j, node->heuristic);
 		m_open.push_back(node);
 	}
 }
 
-int AstarExe::ComputeHeuristic(Node * _node,Node * _goal) {
-	int toGoal = abs(_goal->i - _node->i) + abs(_goal->j - _node->j);
+int AstarExe::ComputeHeuristic(Node * _node) {
+	int toGoal = abs(m_goalNode->i - _node->i) + abs(m_goalNode->j - _node->j);
 	_node->heuristic = _node->cost + toGoal;
 	return _node->heuristic;
 }
 
-AstarExe::Node * AstarExe::PopBest() {
+Node * AstarExe::PopBest() {
 	int bestIndex = 0;
 	int bestHeuristic = 50000;
 	//find best heuristic index

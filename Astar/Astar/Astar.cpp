@@ -20,13 +20,20 @@ int main()
 	AstarExe * m_astarExe = new AstarExe(m_grid);
 	m_astarExe->Start();
 
+	int count = 0;
+
 	while (window.isOpen())
 	{
+		count++;
 		sf::Event event;
 		while (window.pollEvent(event))
 		{
 			if (event.type == sf::Event::Closed)
 				window.close();
+		}
+
+		if (count % 10 == 0) {
+			m_astarExe->Update();
 		}
 
 		window.clear();

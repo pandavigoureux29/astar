@@ -1,38 +1,26 @@
 #pragma once
 
 #include "Grid.h"
+#include "Node.h"
 
 class AstarExe
 {
-
-	struct Node {
-	public :
-		int i = 0;
-		int j = 0;
-		int type = 0;
-		int heuristic = -1;
-		int cost = 0;
-	public:
-		Node() {};
-		Node(int _i, int _j, int _type) {
-			i = _i;
-			j = _j;
-			_type = _type;
-		}
-
-		bool Equals(Node *_n) {
-			return _n->i == i && _n->j == j;
-		}
-	};
 
 private :
 	Grid * m_grid;
 	std::vector<Node*> m_open;
 	std::vector<Node*> m_closed;
-	Node m_goal;
+	Node * m_startNode;
+	Node * m_goalNode;
 
-	int ComputeHeuristic(Node * _node,Node * _goal);
-	void CheckNeighbours(int i, int j,int _cost);
+	//Runtime variables
+	bool m_started = false;
+	bool m_found = false;
+	int m_debugCount = 0;
+	Node * m_processingNode;
+
+	int ComputeHeuristic(Node * _node);
+	void CheckNeighbours(Node * _node);
 	void CheckNode(int i, int j, int _cost);
 
 	Node * PopBest();
@@ -44,5 +32,6 @@ public:
 	~AstarExe();
 
 	void Start();
+	void Update();
 };
 
