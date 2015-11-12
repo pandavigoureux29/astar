@@ -132,11 +132,11 @@ void Grid::FillStatic() {
 	FillColumn(2, new int[10]{ 2,1,1,1,1,0,1,1,1,0 });
 	FillColumn(3, new int[10]{ 0,0,0,0,1,1,1,1,1,0 });
 	FillColumn(4, new int[10]{ 0,1,1,1,1,1,1,1,1,0 });
-	FillColumn(5, new int[10]{ 0,1,1,1,1,1,0,0,1,0 });
+	FillColumn(5, new int[10]{ 0,1,1,0,0,0,0,0,0,0 });
 	FillColumn(6, new int[10]{ 0,1,1,1,1,1,0,1,1,0 });
-	FillColumn(7, new int[10]{ 0,1,1,1,1,1,0,1,1,0 });
+	FillColumn(7, new int[10]{ 0,1,1,1,1,1,1,1,1,0 });
 	FillColumn(8, new int[10]{ 0,1,1,1,1,1,0,1,1,0 });
-	FillColumn(9, new int[10]{ 0,0,0,0,0,0,0,3,0,0 });
+	FillColumn(9, new int[10]{ 0,0,0,0,0,0,0,0,3,0 });
 
 	m_startingNode = Node(2,0,S_START_TYPE);
 	m_goalNode = Node(9, 7, S_GOAL_TYPE);

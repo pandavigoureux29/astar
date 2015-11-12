@@ -24,17 +24,23 @@ int main()
 
 	while (window.isOpen())
 	{
-		count++;
+		//SFML Event for Window Closing
 		sf::Event event;
 		while (window.pollEvent(event))
 		{
 			if (event.type == sf::Event::Closed)
 				window.close();
+			if (event.type == sf::Event::KeyPressed) {
+				//Update Astar
+				m_astarExe->Update();
+			}
 		}
 
-		if (count % 10 == 0) {
+		count++;
+
+		/*if (count % 20 == 0) {
 			m_astarExe->Update();
-		}
+		}*/
 
 		window.clear();
 		//window.draw(shape);
