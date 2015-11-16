@@ -1,5 +1,5 @@
 # astar
-A C++/SFML Astar program. 
+A C++/SFML Astar program (Microsoft Visual Studio 14.0)
 
 The Grid class contains the code for creating the map ( a grid of Nodes ) and drawing it with SFML.
 
