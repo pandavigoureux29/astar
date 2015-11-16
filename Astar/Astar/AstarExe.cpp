@@ -30,7 +30,7 @@ void AstarExe::Update() {
 	m_processingNode = PopBest();
 	m_processingNode->visited = true;
 	//keep position
-	int i = m_processingNode->i, j = m_processingNode->j;
+	int i = m_processingNode->column, j = m_processingNode->line;
 
 	printf("------ %d ProCESSing Node (%d,%d) -------\n",m_debugCount, i, j);
 
@@ -53,13 +53,13 @@ void AstarExe::Update() {
 // Checks all neighbours
 void AstarExe::CheckNeighbours(Node * _node) {
 	//up
-	CheckNode(_node->i, _node->j - 1, _node->cost+1, _node);
+	CheckNode(_node->column, _node->line - 1, _node->cost+1, _node);
 	//down
-	CheckNode(_node->i, _node->j + 1, _node->cost+1, _node);
+	CheckNode(_node->column, _node->line + 1, _node->cost+1, _node);
 	//left
-	CheckNode(_node->i - 1, _node->j, _node->cost+1, _node);
+	CheckNode(_node->column - 1, _node->line, _node->cost+1, _node);
 	//right
-	CheckNode(_node->i + 1, _node->j, _node->cost+1, _node);
+	CheckNode(_node->column + 1, _node->line, _node->cost+1, _node);
 }
 
 //check a node and add it to open list if necessary
@@ -89,7 +89,7 @@ void AstarExe::CheckNode(int _i, int _j, int _cost, Node * _parent) {
 }
 
 int AstarExe::ComputeHeuristic(Node * _node) {
-	int toGoal = abs(m_goalNode->i - _node->i) + abs(m_goalNode->j - _node->j);
+	int toGoal = abs(m_goalNode->column - _node->column) + abs(m_goalNode->line - _node->line);
 	//int toGoal = pow( (m_goalNode->j - _node->j), 2) + pow( (m_goalNode->i - _node->i),2);
 	//toGoal = sqrt(toGoal);
 	_node->heuristic = _node->cost + toGoal;

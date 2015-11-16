@@ -16,9 +16,9 @@ int main()
 
 	std::srand(time(0));
 
-	Grid * m_grid = new Grid();
-	AstarExe * m_astarExe = new AstarExe(m_grid);
-	m_astarExe->Start();
+	Grid m_grid;
+	AstarExe m_astarExe(&m_grid);
+	m_astarExe.Start();
 
 	int count = 0;
 
@@ -32,7 +32,7 @@ int main()
 				window.close();
 			if (event.type == sf::Event::KeyPressed) {
 				//Update Astar
-				m_astarExe->Update();
+				m_astarExe.Update();
 			}
 		}
 
@@ -44,11 +44,9 @@ int main()
 
 		window.clear();
 		//window.draw(shape);
-		m_grid->Draw(&window);
+		m_grid.Draw(window);
 		window.display();
 	}
-	delete m_astarExe;
-	delete m_grid;
 
     return 0;
 }

@@ -3,16 +3,13 @@
 
 
 Grid::Grid()
-	:m_gridData(10)
 {
 	if (!font.loadFromFile("G:/Projects/MVSProjects/astar/Astar/dodjzem.ttf"))
 	{
 		// erreur...
 	}
-	//Create data
-	for (int i = 0; i < m_gridData.size(); i++) {
-		m_gridData[i] = std::vector<Node>(10);
-	}
+	//Create default data
+	m_gridData.resize(m_width*m_height);
 	//FillRandom();
 	FillStatic();
 	//Print();
@@ -45,38 +42,35 @@ void Grid::FillRandom() {
 	SetValueAt(S_START_TYPE, tempI, tempJ);*/
 }
 
-void Grid::SetValueAt(int _value, int _i, int _j) {
-	std::vector<Node> *v;
-	if (_i < m_width) {
-		v = &m_gridData[_i];
-		if (_j < v->size()) {
-			(*v)[_j].type = _value;
-		}
+void Grid::SetValueAt(int _value, int _col, int _line) {
+	const unsigned int index = _line * m_width + _col;
+	if (index < m_gridData.size())
+	{
+		m_gridData[index].type = _value;
 	}
-	v = NULL;
 }
 
-Node * Grid::GetNodeAt( int _i, int _j) {
-	std::vector<Node> *v;
-	if (_i < m_width) {
-		v = &m_gridData[_i];
-		if (_j < v->size())
-			return &(m_gridData[_i][_j]);
+Node * Grid::GetNodeAt( int _col, int _line) {
+	const unsigned int index = _line * m_width + _col;
+	if (index < m_gridData.size())
+	{
+		return &m_gridData[index];
 	}
-	v = NULL;
-	return NULL;
+
+	return nullptr;
 }
 
 void Grid::Print() {
 	for (int j = 0; j < m_height; j++) {
 		for (int i = 0; i < m_width; i++) {
-			printf("%d ", m_gridData[i][j].type);
+			printf("%d ", GetNodeAt(i,j)->type);
 		}
 		printf("\n");
 	}
 }
 
-void Grid::Draw(sf::RenderWindow *_window) {
+void Grid::Draw(sf::RenderWindow& _window) const 
+{
 	//create rect template for the grid
 	sf::RectangleShape rect;
 	rect.setSize( sf::Vector2f(m_cellWidth, m_cellWidth) );
@@ -88,30 +82,30 @@ void Grid::Draw(sf::RenderWindow *_window) {
 	for (int j = 0; j < m_height; j++) {
 		for (int i = 0; i < m_width; i++) {
 			//get the type of the cell
-			Node * node = &m_gridData[i][j];
+			const Node& node = m_gridData[j*m_width+i];
 			//Colorize it
-			switch (node->type) {
+			switch (node.type) {
 				case S_GROUND_TYPE: rect.setFillColor(sf::Color::White); break;
 				case S_WALL_TYPE: rect.setFillColor(sf::Color::Black); break;
 				case S_GOAL_TYPE: rect.setFillColor(sf::Color::Red); break;
 				case S_START_TYPE: rect.setFillColor(sf::Color::Blue); break;
 			}
-			if (node->visited == true && node->type != Grid::S_START_TYPE) {
+			if (node.visited == true && node.type != Grid::S_START_TYPE) {
 				rect.setFillColor(sf::Color::Yellow);
 			}
-			if (node->finalWayID >= 0) {
+			if (node.finalWayID >= 0) {
 				rect.setFillColor(sf::Color::Green);
 			}
 			//set position 
 			rect.setPosition(sf::Vector2f(i * 64, j * 64));
 			//then finally draw
-			_window->draw(rect);
+			_window.draw(rect);
 			//TEXT
 			/*text.setString(std::to_string(node->i)+","+std::to_string(node->j));
 			text.setPosition(sf::Vector2f(i * 64, j * 64));
 			text.setColor(sf::Color::Red);
 			text.setCharacterSize(15);
-			_window->draw(text);
+			_window.draw(text);
 			//cost
 			text.setColor(sf::Color::Black);
 			text.setPosition(sf::Vector2f(i * 64, j * 64 +20));
@@ -145,12 +139,13 @@ void Grid::FillStatic() {
 	m_goalNode = GetNodeAt(9, 7);
 }
 
-void Grid::FillColumn(int _index, int * _array) {
-	std::vector<Node> * v = &m_gridData[_index];
+void Grid::FillColumn(int _col, int * _array) {
+	Node * node;
 	for (int i = 0; i < m_height; i++) {
-		(*v)[i].type = *(_array + i);
-		(*v)[i].i = _index;
-		(*v)[i].j = i;
+		node = GetNodeAt(_col, i);
+		node->type = *(_array + i);
+		node->column = _col;
+		node->line = i;
 	}
 }
 

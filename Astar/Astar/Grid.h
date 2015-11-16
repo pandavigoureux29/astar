@@ -10,7 +10,7 @@ class Grid
 
 //Variables
 private:
-	std::vector< std::vector<Node> > m_gridData;
+	std::vector<Node> m_gridData;
 	int m_width = 10;
 	int m_height = 10;
 	int m_cellWidth = 64;
@@ -43,7 +43,7 @@ public :
 	Node * GetGoalNode();
 
 	void Print();
-	void Draw(sf::RenderWindow *_window);
+	void Draw(sf::RenderWindow& _window) const;
 
 	int GetWidth();
 	int GetHeight();
